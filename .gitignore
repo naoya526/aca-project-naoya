@@ -1,0 +1,13 @@
+# Terraform state files
+terraform.tfstate
+terraform.tfstate.backup
+
+# Local .terraform directory
+.terraform/
+
+# Override files
+override.tf
+override.tf.json
+
+# Crash logs
+crash.log
