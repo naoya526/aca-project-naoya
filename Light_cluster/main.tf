@@ -1,5 +1,5 @@
 provider "google" {
-  project = var.projec
+  project = var.project
   credentials = file(var.gcp_credentials_file)
   region  = var.region
   zone    = var.zone
@@ -25,7 +25,7 @@ resource "google_compute_instance" "light_nodes" {
   metadata_startup_script = file("startup-script.sh")
 
   metadata = {
-    ssh-keys = "naoya:${file(var.public_key_path)}"
+    ssh-keys = "debian:${file(var.public_key_path)}"
   }
 
   tags = ["mpi-node"]
