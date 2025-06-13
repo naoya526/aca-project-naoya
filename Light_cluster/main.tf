@@ -1,5 +1,6 @@
 provider "google" {
-  project = var.project
+  project = var.projec
+  credentials = public_key_path
   region  = var.region
   zone    = var.zone
 }
