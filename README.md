@@ -21,18 +21,30 @@ This project explores parallelizing the forward and backward propagation of conv
 - Build tool: `Makefile`
 - Debugging: GDB (GNU Debugger)
 
+## Implementation
+
+### Local Experiment
+To enable seamless integration with frameworks like PyTorch, a Python wrapper is provided. For computational efficiency and parallelization, the core convolution operations are implemented in C with MPI. The Python code calls the optimized C functions via `ctypes`, combining ease of use with high performance.
+
 ## Execution Example (Local)
 
 | # Processes | Execution Time | Description                                |
 |------------:|----------------|--------------------------------------------|
-| 1           | 0.525627 sec   | Serial execution (no parallelism)          |
-| 2           | 0.201717 sec   | Parallel split (2 ranks, 2500 each)        |
-| 4           | 0.070831 sec   | Parallel split (4 ranks, 625 each)         |
+| 1           | 0.602157 sec   | Serial execution (no parallelism)          |
+| 2           | 0.266914 sec   | Parallel split (2 ranks, 2500 each)        |
+| 4           | 0.134905 sec   | Parallel split (4 ranks, 625 each)         |
+
 
 Example command:  
 ```bash
+ mpicc -o cnn_mpi main.c conv2d.c -lm
+ mpiexec -n 4 ./cnn_mpi
+```
+```bash
 mpiexec -n 4 python3 wrapper_test.py
 ```
+
+
 
 ## Next Steps
 
