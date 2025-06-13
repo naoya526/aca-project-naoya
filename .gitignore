@@ -11,3 +11,4 @@ override.tf.json
 
 # Crash logs
 crash.log
+Light_cluster/terraform.tfvars
