@@ -1,6 +1,6 @@
 provider "google" {
   project = var.projec
-  credentials = public_key_path
+  credentials = "naoya:${file(var.public_key_path)}"
   region  = var.region
   zone    = var.zone
 }
