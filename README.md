@@ -44,11 +44,17 @@ Example command:
 ```bash
 mpiexec -n 4 python3 wrapper_test.py
 ```
-#### 4.2.2 Weak Scalanility
+#### 4.2.2 Weak Scalability
+
 
 ## 5 Experiment for Strong Scalability
 ### 5.1 Light Cluster
-### 5.2 Fat Cluster
+| # Processes | Execution Time (max) | Local Batch per Rank | Start-End Indices per Rank (examples)                                                                 | Output Shape            |
+|------------:|---------------------|----------------------|------------------------------------------------------------------------------------------------------|------------------------|
+| 1           | 13.484401 sec       | 160,000              | 0-160,000                                                                                           | (160,000, 1, 30, 30)   |
+| 2           | 9.518927 sec        | 40,000               | 0-40,000 (r0), 40,000-80,000 (r1)                                                                   | (160,000, 1, 30, 30)   |
+| 4           | 7.307634 sec        | 10,000               | 0-10,000 (r0), 10,000-20,000 (r1), 20,000-30,000 (r2), 30,000-40,000 (r3)                           | (160,000, 1, 30, 30)   |
+| 8           | 6.058151 sec        | 2,500                | 0-2,500 (r0), 2,500-5,000 (r1), 5,000-7,500 (r2), ..., 17,500-20,000 (r7)                           | (160,000, 1, 30, 30)   |
 | # Processes | Execution Time (max) | Local Batch per Rank | Start-End Indices per Rank (examples)                                 | Output Shape            |
 |------------:|---------------------|----------------------|-----------------------------------------------------------------------|------------------------|
 | 1           | 84.838156 sec       | 160000               | 0-160000                                                              | (160000, 1, 30, 30)    |
@@ -58,7 +64,12 @@ mpiexec -n 4 python3 wrapper_test.py
 | 16          | 2.986997 sec        | 10000                | 0-10000 (r0), 10000-20000 (r1), ..., 150000-160000 (r15)              | (160000, 1, 30, 30)    |
 ## 6 Experiment for Weak Scalability
 ### 6.1 Light Cluster
-
+| # Processes | Execution Time (max) | Local Batch per Rank | Start-End Indices per Rank (examples)                | Output Shape            |
+|------------:|---------------------|----------------------|------------------------------------------------------|------------------------|
+| 1           | 0.744552 sec        | 10,000               | 0-10,000                                             | (10,000, 1, 30, 30)    |
+| 2           | 1.056537 sec        | 5,000                | 0-5,000 (r0), 5,000-10,000 (r1)                      | (20,000, 1, 30, 30)    |
+| 4           | 2.039511 sec        | 2,500                | 0-2,500 (r0), 2,500-5,000 (r1), 5,000-7,500 (r2), 7,500-10,000 (r3) | (40,000, 1, 30, 30)    |
+| 8           | 3.729983 sec        | 1,250                | 0-1,250 (r0), 1,250-2,500 (r1), ..., 8,750-10,000 (r7) | (80,000, 1, 30, 30)    |
 
 ### 6.2 Fat Cluster
 | # Processes | Execution Time (max) | Local Batch per Rank | Start-End Indices per Rank (examples)                | Output Shape            |

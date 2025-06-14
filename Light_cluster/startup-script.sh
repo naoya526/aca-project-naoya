@@ -1,50 +1,46 @@
-le ! ping -c 1 google.com &> /dev/null; do
-  echo "Waiting for network..."
-  sleep 5
-done
-B. パッケージロックの問題
-bash
-# apt-get実行前にロック解除を待機
-while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
-  echo "Waiting for dpkg lock..."
-  sleep 5
-done
-C. 権限の問題
-GitHubからクローンす
-
-
-
-
-
 #!/bin/bash
 
-# ログ出力の設定
-exec > >(tee -a /var/log/startup-script.log)
+# デバッグ用：全てのコマンドと出力をログに記録
+exec > >(tee -a /tmp/startup-debug.log)
 exec 2>&1
+set -x
 
-echo "=== Startup script started at $(date) ==="
+echo "=== DEBUG: Startup script started at $(date) ==="
+echo "Current user: $(whoami)"
+echo "Current directory: $(pwd)"
+echo "PATH: $PATH"
 
-# エラー時に停止
-set -e
+# ネットワーク接続確認
+echo "Testing network connectivity..."
+if ping -c 1 8.8.8.8; then
+    echo "Network OK"
+else
+    echo "Network FAILED"
+    exit 1
+fi
 
-# 環境変数の設定
-export DEBIAN_FRONTEND=noninteractive
+# パッケージマネージャの状態確認
+echo "Checking package manager..."
+sudo apt-get update -y || { echo "apt-get update failed"; exit 1; }
 
-echo "Updating package lists..."
-sudo apt-get update -y
-
+# OpenMPIインストール
 echo "Installing OpenMPI..."
-sudo apt-get install -y openmpi-bin openmpi-common libopenmpi-dev
+sudo apt-get install -y openmpi-bin openmpi-common libopenmpi-dev || { echo "OpenMPI install failed"; exit 1; }
 
+# Gitインストール
 echo "Installing Git..."
-sudo apt-get install -y git
+sudo apt-get install -y git || { echo "Git install failed"; exit 1; }
 
+# リポジトリクローン
 echo "Cloning repository..."
-# ホームディレクトリを明示的に指定
 cd /home/debian
-sudo -u debian git clone https://github.com/naoya526/aca-project-naoya
+if sudo -u debian git clone https://github.com/naoya526/aca-project-naoya; then
+    echo "Git clone successful"
+    sudo chown -R debian:debian /home/debian/aca-project-naoya
+    ls -la /home/debian/
+else
+    echo "Git clone failed"
+    exit 1
+fi
 
-# クローンしたディレクトリの所有者を変更
-sudo chown -R debian:debian /home/debian/aca-project-naoya
-
-echo "=== Startup script completed successfully at $(date) ==="
+echo "=== DEBUG: Startup script completed at $(date) ==="
