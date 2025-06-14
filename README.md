@@ -27,14 +27,6 @@ This project explores parallelizing the forward and backward propagation of conv
 To enable seamless integration with frameworks like PyTorch, a Python wrapper is provided. For computational efficiency and parallelization, the core convolution operations are implemented in C with MPI. The Python code calls the optimized C functions via `ctypes`, combining ease of use with high performance.
 
 ### 4.2 Local Execution Results
-#### 4.2.1 Strong Scalanility
-
-| # Processes | Execution Time | Description                                |
-|------------:|----------------|--------------------------------------------|
-| 1           | 0.602157 sec   | Serial execution (no parallelism)          |
-| 2           | 0.266914 sec   | Parallel split (2 ranks, 2500 each)        |
-| 4           | 0.134905 sec   | Parallel split (4 ranks, 625 each)         |
-
 
 Example command:  
 ```bash
@@ -44,7 +36,22 @@ Example command:
 ```bash
 mpiexec -n 4 python3 wrapper_test.py
 ```
+
+#### 4.2.1 Strong Scalanility
+input:10000
+| # Processes | Execution Time | Description                                |
+|------------:|----------------|--------------------------------------------|
+| 1           | 0.602157 sec   | Serial execution (no parallelism)          |
+| 2           | 0.266914 sec   | Parallel split (2 ranks, 2500 each)        |
+| 4           | 0.134905 sec   | Parallel split (4 ranks, 625 each)         |
+
 #### 4.2.2 Weak Scalability
+input:10000 for each processor
+| # Processes | Execution Time | Description                                |
+|------------:|----------------|--------------------------------------------|
+| 1           | 0.610445 sec   | Serial execution (no parallelism)          |
+| 2           | 0.536835 sec   | Parallel split (2 ranks, 2500 each)        |
+| 4           | 0.657419 sec   | Parallel split (4 ranks, )         |
 
 
 ## 5 Experiment for Strong Scalability
@@ -84,11 +91,9 @@ mpiexec -n 4 python3 wrapper_test.py
 | 16          | 0.702247 sec        | 100,000              | 0-100,000 (r0), 100,000-200,000 (r1), ..., 1,500,000-1,600,000 (r15) | (1600000, 1, 30, 30)   |
 
 ## Next Steps
-
-- [ ] Launch a minimal Light Cluster using Terraform on GCP
+- [ ] write the report
 - [ ] Validate MPI-based distributed runs in cloud
 - [ ] Compare performance between local and cloud environments
 
 ## Author
-
 - [Naoya Kumakura](https://github.com/naoya526)
