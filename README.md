@@ -26,7 +26,8 @@ This project explores parallelizing the forward and backward propagation of conv
 ### 4.1 Local Experiment
 To enable seamless integration with frameworks like PyTorch, a Python wrapper is provided. For computational efficiency and parallelization, the core convolution operations are implemented in C with MPI. The Python code calls the optimized C functions via `ctypes`, combining ease of use with high performance.
 
-### 4.2 Local Execution Results(Strong Scalanility)
+### 4.2 Local Execution Results
+#### 4.2.1 Strong Scalanility
 
 | # Processes | Execution Time | Description                                |
 |------------:|----------------|--------------------------------------------|
@@ -43,13 +44,11 @@ Example command:
 ```bash
 mpiexec -n 4 python3 wrapper_test.py
 ```
+#### 4.2.2 Weak Scalanility
 
 ## 5 Experiment for Strong Scalability
 ### 5.1 Light Cluster
-
-
 ### 5.2 Fat Cluster
-
 | # Processes | Execution Time (max) | Local Batch per Rank | Start-End Indices per Rank (examples)                                 | Output Shape            |
 |------------:|---------------------|----------------------|-----------------------------------------------------------------------|------------------------|
 | 1           | 84.838156 sec       | 160000               | 0-160000                                                              | (160000, 1, 30, 30)    |
