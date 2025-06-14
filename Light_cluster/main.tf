@@ -6,7 +6,7 @@ provider "google" {
 }
 
 resource "google_compute_instance" "light_nodes" {
-  count        = 4
+  count        = 8
   name         = "light-node-${count.index}"
   machine_type = "e2-medium"
   zone         = var.zone
