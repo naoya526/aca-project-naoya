@@ -16,8 +16,8 @@ int main(int argc, char** argv) {
     int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-    const int B = 160000, IC = 1, OC = 1, H = 32, W = 32, K = 3;
+    const int B = (argc > 1) ? atoi(argv[1]) : 10000;
+    const int IC = 1, OC = 1, H = 32, W = 32, K = 3;
     const int B_local = B / size;
     const int out_H = H - K + 1, out_W = W - K + 1;
 
