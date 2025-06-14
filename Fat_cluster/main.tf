@@ -5,11 +5,12 @@ provider "google" {
   zone    = var.zone
 }
 
-resource "google_compute_instance" "light_nodes" {
-  count        = 4
-  name         = "light-node-${count.index}"
-  machine_type = "e2-medium"
+resource "google_compute_instance" "fat_nodes" {
+  count        = 1
+  name         = "fat-node-${count.index}"
+  machine_type = "n2-highcpu-32"
   zone         = var.zone
+
 
   boot_disk {
     initialize_params {
