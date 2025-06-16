@@ -31,7 +31,19 @@ int main(int argc, char** argv) {
     if (rank == 0) {
         input_full = (float*)malloc(B * IC * H * W * sizeof(float));
         output_full = (float*)malloc(B * OC * out_H * out_W * sizeof(float));
-        for (int i = 0; i < B * IC * H * W; ++i) input_full[i] = rand_float();
+        const char *path = "input_image.bin";
+        FILE *fp = fopen(path, "rb");
+        if (fp) {
+            size_t read = fread(input_full, sizeof(float), B * IC * H * W, fp);
+            if (read != B * IC * H * W) {
+                fprintf(stderr, "Failed to read full image data from %s\n", path);
+                exit(1);
+            }
+            fclose(fp);
+        } else {
+            fprintf(stderr, "Failed to open %s for reading. Using random data.\n", path);
+            for (int i = 0; i < B * IC * H * W; ++i) input_full[i] = rand_float();
+        }
         for (int i = 0; i < OC * IC * K * K; ++i) kernel[i] = rand_float();
     }
 
