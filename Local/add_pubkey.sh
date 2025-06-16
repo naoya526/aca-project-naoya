@@ -6,6 +6,6 @@ PUB_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC91FRucJ8+l1JrFeAfJxYp1e7eamMuPmt
 HOSTFILE="hosts.txt"
 
 while read -r HOST; do
-  echo "🔐 Adding key to $HOST..."
+  echo " Adding key to $HOST..."
   ssh -o StrictHostKeyChecking=no debian@$HOST "mkdir -p ~/.ssh && echo '$PUB_KEY' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && chmod 700 ~/.ssh"
 done < "$HOSTFILE"
