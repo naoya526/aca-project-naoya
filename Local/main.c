@@ -1,5 +1,5 @@
 //mpicc -o cnn_mpi main.c conv.c -lm
-//mpiexec -n 4 ./cnn_mpi
+//mpiexec -n 4 ./cnn_mpi [batch number B]
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
@@ -20,7 +20,19 @@ int main(int argc, char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     // パラメータ定義
-    const int B = 20, IC = 1, OC = 1, H = 1024, W = 1024, K = 3, P = 1, S = 1;
+    int B = 20; // デフォルト値
+    const int IC = 3, OC = 3, H = 1024, W = 1024, K = 3, P = 1, S = 1;
+
+    // コマンドライン引数でBを受け付ける（rank 0のみ）
+    if (rank == 0 && argc > 1) {
+        int tmp = atoi(argv[1]);
+        if (tmp > 0) {
+            B = tmp;
+        }
+    }
+    // 全rankにBをブロードキャスト
+    MPI_Bcast(&B, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
     const int B_local = B / size;
     const int out_H = (H + 2 * P - K) / S + 1;
     const int out_W = (W + 2 * P - K) / S + 1;
@@ -78,8 +90,7 @@ int main(int argc, char** argv) {
 
     // 後始末
     if (rank == 0) { free(input_full); free(output_full); }
-    free(input_local); free(output_local); free(kernel);
-
+    free(input_local);
     MPI_Finalize();
     return 0;
 }

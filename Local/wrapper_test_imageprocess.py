@@ -1,61 +1,51 @@
-#mpiexec -n 2 python3 wrapper_test.py
-#mpiexec -n 4 python3 wrapper_test.py
+#mpicc -fPIC -shared -o libconv.so conv.c
+#mpiexec -n 4 python3 wrapper_test_imageprocess.py
 import ctypes
 import numpy as np
 from mpi4py import MPI
 import time
 from PIL import Image
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 import psutil
 import os
-
+import sys
 # ---- 設定 ----
 IMG_DIR = "pic/"
-B, IC, OC, H, W, K, P, S = 32, 3, 3, 1024, 1024, 3, 1, 1
+IC, OC, H, W, K, P, S = 3, 3, 1024, 1024, 3, 1, 1
 SEED = 200
 
-# ---- Cライブラリの読み込み ----
-lib = ctypes.CDLL('./libconv.so')
-lib.conv2d_forward.argtypes = [ctypes.POINTER(ctypes.c_float)] * 3 + [ctypes.c_int] * 6
-lib.conv2d_forward.restype = None
-
-# ---- MPI初期化 ----
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-size = comm.Get_size()
-
-B_local = B // size
-start_idx = rank * B_local
-end_idx = start_idx + B_local
-
-np.random.seed(SEED)
-
-def load_input_images(batch_size):
-    input_np = np.empty((batch_size, IC, H, W), dtype=np.float32)
-    for i in range(batch_size):
+def parse_batch_size(default=40):
+    if len(sys.argv) > 1:
         try:
-            img = Image.open(f"{IMG_DIR}input_{i}.jpg").convert("RGB")
+            return int(sys.argv[1])
+        except ValueError:
+            print("Invalid batch size. Using default B=40.")
+    return default
+
+def load_input_images(batch_size, ic, h, w, img_dir):
+    input_np = np.empty((batch_size, ic, h, w), dtype=np.float32)
+    for i in range(batch_size):
+        img_path = os.path.join(img_dir, f"input_{i}.jpg")
+        try:
+            img = Image.open(img_path).convert("RGB")
             img_np = np.array(img, dtype=np.float32)
             img_np = np.transpose(img_np, (2, 0, 1))
         except FileNotFoundError:
-            #print(f"Warning: input_{i}.jpeg not found, generating random image")
-            img_np = np.random.rand(IC, H, W).astype(np.float32)
+            print(f"Image {img_path} not found. Using random data instead.")
+            img_np = np.random.rand(ic, h, w).astype(np.float32)
         input_np[i] = img_np
     return input_np
 
-# ---- kernel ----
-def create_identity_kernel():
-    kernel = np.zeros((OC, IC, K, K), dtype=np.float32)
-    center = K // 2
-    for c in range(min(OC, IC)):
-        kernel[c, c, center, center] = 1.0
-    return kernel
+def create_kernel(oc, ic, k, identity=False):
+    if identity:
+        kernel = np.zeros((oc, ic, k, k), dtype=np.float32)
+        center = k // 2
+        for c in range(min(oc, ic)):
+            kernel[c, c, center, center] = 1.0
+        return kernel
+    else:
+        return np.random.rand(oc, ic, k, k).astype(np.float32)
 
-def create_random_kernel():
-    kernel = np.random.rand(OC, IC, K, K).astype(np.float32)
-    return kernel
-
-# ---- Normalize output ----
 def normalize_output_for_display(arr):
     arr_norm = np.zeros_like(arr)
     for c in range(arr.shape[0]):
@@ -73,54 +63,75 @@ def display_and_save_output(output_arr, title, filename):
 
 def get_memory_usage_mb():
     process = psutil.Process(os.getpid())
-    mem_bytes = process.memory_info().rss  # Resident Set Size
-    return mem_bytes / (1024 ** 2)  # MB
-# ---- data preparation ----
-if rank == 0:
-    input_np_full = load_input_images(B)
-    #kernel_np = create_identity_kernel()
-    kernel_np = create_random_kernel()
-else:
-    input_np_full = None
-    kernel_np = np.empty((OC, IC, K, K), dtype=np.float32)
+    mem_bytes = process.memory_info().rss
+    return mem_bytes / (1024 ** 2)
 
-# ---- gather memory usage ----
-mem_usage = get_memory_usage_mb()
-all_mem_usage = comm.gather(mem_usage, root=0)
+def main():
+    # ---- MPI初期化 ----
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    np.random.seed(SEED)
 
-# ---- broadcast kernel ----
-comm.Bcast(kernel_np, root=0)
+    # ---- バッチサイズ取得 ----
+    B = parse_batch_size()
+    B_local = B // size
 
-# ---- scatter input data ----
-input_local = np.empty((B_local, IC, H, W), dtype=np.float32)
-comm.Scatter([input_np_full, MPI.FLOAT], input_local, root=0)
+    # ---- Cライブラリの読み込み ----
+    lib = ctypes.CDLL('./libconv.so')
+    lib.conv2d_forward.argtypes = [ctypes.POINTER(ctypes.c_float)] * 3 + [ctypes.c_int] * 8
+    lib.conv2d_forward.restype = None
 
-# ---- allocate output ----
-output_local = np.zeros((B_local, OC, H - K + 1, W - K + 1), dtype=np.float32)
+    # ---- データ準備 ----
+    if rank == 0:
+        input_np_full = load_input_images(B, IC, H, W, IMG_DIR)
+        kernel_np = create_kernel(OC, IC, K, identity=False)
+    else:
+        input_np_full = None
+        kernel_np = np.empty((OC, IC, K, K), dtype=np.float32)
 
-# ---- Execute Conv2d in C ----
-start = time.perf_counter()
-lib.conv2d_forward(
-    input_local.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
-    kernel_np.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
-    output_local.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
-    B_local, IC, OC, H, W, K
-)
-elapsed = time.perf_counter() - start
+    # ---- メモリ使用量収集 ----
+    mem_usage = get_memory_usage_mb()
+    all_mem_usage = comm.gather(mem_usage, root=0)
 
-# ---- Gather the output ----
-output_np_full = np.empty((B, OC, H - K + 1, W - K + 1), dtype=np.float32) if rank == 0 else None
-comm.Gather(output_local, output_np_full, root=0)
+    # ---- カーネルのブロードキャスト ----
+    comm.Bcast(kernel_np, root=0)
 
-# ---- show maximum execution time in Rank 0 ----
-max_time = comm.reduce(elapsed, op=MPI.MAX, root=0)
+    # ---- 入力データの分散 ----
+    input_local = np.empty((B_local, IC, H, W), dtype=np.float32)
+    comm.Scatter([input_np_full, MPI.FLOAT], input_local, root=0)
 
-# ---- show output（Rank0） ----
-if rank == 0:
-    print("Output shape:", output_np_full.shape)
-    print(f"Executed time (max across ranks): {max_time:.6f} sec")
-    print("Memory usage in each rank(MB):", all_mem_usage)
-    print(f"Sum of memory usage: {sum(all_mem_usage):.2f} MB")
-    # first output image (rank 0, batch 0)
-    output_img = normalize_output_for_display(output_np_full[0])
-    display_and_save_output(output_img, "Output (rank 0, batch 0, RGB)", "output_rank0_batch0_rgb.png")
+    # ---- 出力配列の確保 ----
+    out_H = (H + 2 * P - K) // S + 1
+    out_W = (W + 2 * P - K) // S + 1
+    output_local = np.zeros((B_local, OC, out_H, out_W), dtype=np.float32)
+
+    # ---- CのConv2d実行 ----
+    start = time.perf_counter()
+    lib.conv2d_forward(
+        input_local.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        kernel_np.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        output_local.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+        B_local, IC, OC, H, W, K, P, S
+    )
+    elapsed = time.perf_counter() - start
+
+    # ---- 出力の集約 ----
+    output_np_full = np.empty((B, OC, out_H, out_W), dtype=np.float32) if rank == 0 else None
+    comm.Gather(output_local, output_np_full, root=0)
+
+    # ---- 最大実行時間の集約 ----
+    max_time = comm.reduce(elapsed, op=MPI.MAX, root=0)
+
+    # ---- Rank0で出力 ----
+    if rank == 0:
+        print("Output shape:", output_np_full.shape)
+        print(f"Executed time (max across ranks): {max_time:.6f} sec")
+        print("Memory usage in each rank(MB):", all_mem_usage)
+        print(f"Sum of memory usage: {sum(all_mem_usage):.2f} MB")
+        # 最初の出力画像を保存・表示
+        output_img = normalize_output_for_display(output_np_full[0])
+        display_and_save_output(output_img, "Output (rank 0, batch 0, RGB)", "output_rank0_batch0_rgb.png")
+
+if __name__ == "__main__":
+    main()
