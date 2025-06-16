@@ -36,7 +36,7 @@ Example command:
 for using library of python image pil image, I also implemented on python. In this case, `conv.c` is wrapped with mpi.
 ```bash
 mpicc -fPIC -shared -o libconv.so conv.c
-mpiexec -n 4 python3 wrapper_test.py
+mpiexec -n 4 python3 main.py
 ```
 
 #### 4.2.1 Strong Scalanility

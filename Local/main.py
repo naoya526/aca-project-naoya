@@ -1,5 +1,5 @@
-#mpiexec -n 4 python3 wrapper_image_process.py
-#mpiexec -n 4 python3 wrapper_image_process.py
+#mpicc -fPIC -shared -o libconv.so conv.c
+#mpiexec -n 4 python3 main.py
 import ctypes
 import numpy as np
 from mpi4py import MPI

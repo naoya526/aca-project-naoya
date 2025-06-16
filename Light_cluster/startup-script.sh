@@ -31,6 +31,23 @@ sudo apt-get install -y openmpi-bin openmpi-common libopenmpi-dev || { echo "Ope
 echo "Installing Git..."
 sudo apt-get install -y git || { echo "Git install failed"; exit 1; }
 
+# Python
+echo "Installing Python Library..."
+sudo apt update && sudo apt install -y \
+    build-essential \
+    libopenmpi-dev \
+    python3-dev \
+    python3-pip \
+    python3-venv \
+    libjpeg-dev
+pip install --upgrade pip
+pip install \
+    numpy \
+    mpi4py \
+    pillow \
+    matplotlib \
+    psutil
+
 # リポジトリクローン
 echo "Cloning repository..."
 cd /home/debian
