@@ -17,11 +17,20 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    const int B = 1600, IC = 1, OC = 1, H = 1024, W = 1024, K = 3;
+    const int B = 160000, IC = 1, OC = 1, H = 1024, W = 1024, K = 3;
     const int B_local = B / size;
     const int out_H = H - K + 1, out_W = W - K + 1;
 
-    
+    float *input_full = NULL, *output_full = NULL;
+    float *input_local = (float*)malloc(B_local * IC * H * W * sizeof(float));
+    float *output_local = (float*)malloc(B_local * OC * out_H * out_W * sizeof(float));
+    float *kernel = (float*)malloc(OC * IC * K * K * sizeof(float));
+    // ランク0でデータ作成
+    if (rank == 0) {
+        input_full = (float*)malloc(B * IC * H * W * sizeof(float));
+        output_full = (float*)malloc(B * OC * out_H * out_W * sizeof(float));
+        for (int i = 0; i < B * IC * H * W; ++i) input_full[i] = rand_float();
+        for (int i = 0; i < OC * IC * K * K; ++i) kernel[i] = rand_float();
     }
 
     time_t start_time, end_time;
