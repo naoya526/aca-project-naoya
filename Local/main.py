@@ -8,11 +8,13 @@ from PIL import Image
 from matplotlib import pyplot as plt
 import psutil
 import os
-
+import sys
 # ---- 設定 ----
 IMG_DIR = "pic/"
-B, IC, OC, H, W, K = 32, 3, 3, 1024, 1024, 3
+IC, OC, H, W, K =  3, 3, 1024, 1024, 3
 SEED = 200
+
+
 
 # ---- Cライブラリの読み込み ----
 lib = ctypes.CDLL('./libconv.so')
@@ -23,6 +25,19 @@ lib.conv2d_forward.restype = None
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
+
+if rank == 0:
+    if len(sys.argv) > 1:
+        try:
+            B = int(sys.argv[1])
+        except ValueError:
+            B = 32  # デフォルト値
+    else:
+        B = 32  # デフォルト値
+else:
+    B = None
+
+B = comm.bcast(B, root=0)
 
 B_local = B // size
 start_idx = rank * B_local
