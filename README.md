@@ -33,7 +33,9 @@ Example command:
  mpicc -o cnn_mpi main.c conv.c -lm
  mpiexec -n 4 ./cnn_mpi
 ```
+for using library of python image pil image, I also implemented on python. In this case, `conv.c` is wrapped with mpi.
 ```bash
+mpicc -fPIC -shared -o libconv.so conv.c
 mpiexec -n 4 python3 wrapper_test.py
 ```
 

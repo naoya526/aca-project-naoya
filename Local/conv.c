@@ -3,12 +3,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+// paddingとstrideを引数に追加
 void conv2d_forward(float* input, float* kernel, float* output,
                     int batch_size, int in_channels, int out_channels,
-                    int height, int width, int kernel_size) {
+                    int height, int width, int kernel_size,
+                    int padding, int stride) {
     // input: [batch_size, in_channels, height, width]
-    // kernel: [out_channels, in_channels, kernel_size]
-    // output: [batch_size, out_channels, height-kernel_size+1, width-kernel_size+1]
+    // kernel: [out_channels, in_channels, kernel_size, kernel_size]
+    // output: [batch_size, out_channels, out_height, out_width]
+
+    int out_height = (height + 2 * padding - kernel_size) / stride + 1;
+    int out_width  = (width  + 2 * padding - kernel_size) / stride + 1;
 
     // MPI
     int rank, size;
@@ -19,32 +24,64 @@ void conv2d_forward(float* input, float* kernel, float* output,
     int start = rank * local_batch;
     int end = start + local_batch;
 
-    printf("[MPI] rank=%d, size=%d, local_batch=%d, start=%d, end=%d\n", rank, size, local_batch, start, end);
+    // パディングした入力を作成
+    int padded_height = height + 2 * padding;
+    int padded_width  = width + 2 * padding;
+    float* input_padded = (float*)calloc(local_batch * in_channels * padded_height * padded_width, sizeof(float));
 
-    for (int b = start; b < end; ++b) {// for each batch
-        for (int oc = 0; oc < out_channels; ++oc) {// for each output channel
-            for (int h = 0; h < height - kernel_size + 1; ++h) {// for each output height
-                for (int w = 0; w < width - kernel_size + 1; ++w) {// for each output width
-                    float sum = 0.0f;
-                    for (int ic = 0; ic < in_channels; ++ic) {// for each input channel
-                        for (int kh = 0; kh < kernel_size; ++kh) {// for each kernel height
-                            for (int kw = 0; kw < kernel_size; ++kw) {// for each kernel width
-                                int ih = h + kh;
-                                int iw = w + kw;
-                                sum += input[b*in_channels*height*width + ic*height*width + ih*width + iw] *
-                                       kernel[oc*in_channels*kernel_size*kernel_size + ic*kernel_size*kernel_size + kh*kernel_size + kw];
-                            }
-                        }
-                    }
-                    output[b*out_channels*(height-kernel_size+1)*(width-kernel_size+1) +
-                           oc*(height-kernel_size+1)*(width-kernel_size+1) + h*(width-kernel_size+1) + w] = sum;
+    // パディングを適用
+    for (int b = 0; b < local_batch; ++b) {
+        for (int c = 0; c < in_channels; ++c) {
+            for (int h = 0; h < height; ++h) {
+                for (int w = 0; w < width; ++w) {
+                    int src_idx = b * in_channels * height * width
+                                + c * height * width
+                                + h * width
+                                + w;
+                    int dst_idx = b * in_channels * padded_height * padded_width
+                                + c * padded_height * padded_width
+                                + (h + padding) * padded_width
+                                + (w + padding);
+                    input_padded[dst_idx] = input[src_idx];
                 }
             }
         }
     }
 
+    // 畳み込み本体
+    for (int b = 0; b < local_batch; ++b) {
+        for (int oc = 0; oc < out_channels; ++oc) {
+            for (int oh = 0; oh < out_height; ++oh) {
+                for (int ow = 0; ow < out_width; ++ow) {
+                    float sum = 0.0f;
+                    for (int ic = 0; ic < in_channels; ++ic) {
+                        for (int kh = 0; kh < kernel_size; ++kh) {
+                            for (int kw = 0; kw < kernel_size; ++kw) {
+                                int ih = oh * stride + kh;
+                                int iw = ow * stride + kw;
+                                int in_idx = b * in_channels * padded_height * padded_width
+                                           + ic * padded_height * padded_width
+                                           + ih * padded_width
+                                           + iw;
+                                int k_idx = oc * in_channels * kernel_size * kernel_size
+                                          + ic * kernel_size * kernel_size
+                                          + kh * kernel_size
+                                          + kw;
+                                sum += input_padded[in_idx] * kernel[k_idx];
+                            }
+                        }
+                    }
+                    int out_idx = b * out_channels * out_height * out_width
+                                + oc * out_height * out_width
+                                + oh * out_width
+                                + ow;
+                    output[out_idx] = sum;
+                }
+            }
+        }
+    }
+
+    free(input_padded);
+
     MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Allgather(MPI_IN_PLACE, 0, MPI_DATATYPE_NULL, output,
-                  local_batch*out_channels*(height-kernel_size+1)*(width-kernel_size+1),
-                  MPI_FLOAT, MPI_COMM_WORLD);
 }
