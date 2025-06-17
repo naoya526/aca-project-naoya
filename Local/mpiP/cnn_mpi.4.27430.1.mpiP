@@ -1,0 +1,287 @@
+@ mpiP
+@ Command : ./cnn_mpi 40 
+@ Version                  : 3.5.0
+@ MPIP Build date          : Jun 17 2025, 22:32:37
+@ Start time               : 2025 06 17 23:38:26
+@ Stop time                : 2025 06 17 23:38:35
+@ Timer Used               : PMPI_Wtime
+@ MPIP env var             : [null]
+@ Collector Rank           : 0
+@ Collector PID            : 27430
+@ Final Output Dir         : .
+@ Report generation        : Single collector task
+@ MPI Task Assignment      : 0 DESKTOP-N2CK4II
+@ MPI Task Assignment      : 1 DESKTOP-N2CK4II
+@ MPI Task Assignment      : 2 DESKTOP-N2CK4II
+@ MPI Task Assignment      : 3 DESKTOP-N2CK4II
+
+---------------------------------------------------------------------------
+@--- MPI Time (seconds) ---------------------------------------------------
+---------------------------------------------------------------------------
+Task    AppTime    MPITime     MPI%
+   0       9.09       3.83    42.08
+   1       8.81       6.79    77.11
+   2        8.8       6.79    77.17
+   3       8.79       6.71    76.27
+   *       35.5       24.1    67.94
+---------------------------------------------------------------------------
+@--- Callsites: 32 --------------------------------------------------------
+---------------------------------------------------------------------------
+ ID Lev File/Address        Line Parent_Funct             MPI_Call
+  1   0 0x793f4a21ec0a           [unknown]                Scatter
+  2   0 0x793f4a2120b2           [unknown]                Bcast
+  3   0 0x793f4a21132a           [unknown]                Allgather
+  4   0 0x793f4a2173fa           [unknown]                Gather
+  5   0 0x793f4a21d9aa           [unknown]                Reduce
+  6   0 0x793f4a2120b2           [unknown]                Bcast
+  7   0 0x793f4a211eed           [unknown]                Barrier
+  8   0 0x793f4a2173fa           [unknown]                Gather
+  9   0 0x7b00dbe1ec0a           [unknown]                Scatter
+ 10   0 0x7b00dbe120b2           [unknown]                Bcast
+ 11   0 0x7b00dbe1132a           [unknown]                Allgather
+ 12   0 0x7b00dbe173fa           [unknown]                Gather
+ 13   0 0x7b00dbe1d9aa           [unknown]                Reduce
+ 14   0 0x7b00dbe120b2           [unknown]                Bcast
+ 15   0 0x7b00dbe11eed           [unknown]                Barrier
+ 16   0 0x7b00dbe173fa           [unknown]                Gather
+ 17   0 0x743c0ce1ec0a           [unknown]                Scatter
+ 18   0 0x743c0ce120b2           [unknown]                Bcast
+ 19   0 0x743c0ce1132a           [unknown]                Allgather
+ 20   0 0x743c0ce173fa           [unknown]                Gather
+ 21   0 0x743c0ce1d9aa           [unknown]                Reduce
+ 22   0 0x743c0ce120b2           [unknown]                Bcast
+ 23   0 0x743c0ce11eed           [unknown]                Barrier
+ 24   0 0x743c0ce173fa           [unknown]                Gather
+ 25   0 0x7ebca861ec0a           [unknown]                Scatter
+ 26   0 0x7ebca86120b2           [unknown]                Bcast
+ 27   0 0x7ebca861132a           [unknown]                Allgather
+ 28   0 0x7ebca86173fa           [unknown]                Gather
+ 29   0 0x7ebca861d9aa           [unknown]                Reduce
+ 30   0 0x7ebca86120b2           [unknown]                Bcast
+ 31   0 0x7ebca8611eed           [unknown]                Barrier
+ 32   0 0x7ebca86173fa           [unknown]                Gather
+---------------------------------------------------------------------------
+@--- Aggregate Time (top twenty, descending, milliseconds) ----------------
+---------------------------------------------------------------------------
+Call                 Site       Time    App%    MPI%      Count    COV
+Bcast                  22   3.12e+03    8.78   12.92          1   0.00
+Bcast                  30   3.12e+03    8.78   12.92          1   0.00
+Bcast                  14   3.12e+03    8.78   12.92          1   0.00
+Gather                  4   2.79e+03    7.86   11.57          1   0.00
+Gather                 28   2.55e+03    7.18   10.57          1   0.00
+Reduce                 21   2.38e+03    6.70    9.86          1   0.00
+Gather                 16   1.43e+03    4.04    5.94          1   0.00
+Gather                 12   1.13e+03    3.17    4.67          1   0.00
+Scatter                 1        858    2.42    3.56          1   0.00
+Scatter                25        858    2.42    3.56          1   0.00
+Barrier                23        621    1.75    2.58          1   0.00
+Scatter                 9        530    1.49    2.20          1   0.00
+Barrier                15        403    1.14    1.67          1   0.00
+Scatter                17        306    0.86    1.27          1   0.00
+Gather                 20        194    0.55    0.80          1   0.00
+Allgather              11        177    0.50    0.73          1   0.00
+Allgather               3        177    0.50    0.73          1   0.00
+Allgather              27        176    0.49    0.73          1   0.00
+Allgather              19        175    0.49    0.73          1   0.00
+Gather                 32        4.4    0.01    0.02          1   0.00
+---------------------------------------------------------------------------
+@--- Aggregate Sent Message Size (top twenty, descending, bytes) ----------
+---------------------------------------------------------------------------
+Call                 Site      Count      Total       Avrg  Sent%
+Scatter                17          1   1.26e+08   1.26e+08  12.52
+Scatter                25          1   1.26e+08   1.26e+08  12.52
+Scatter                 1          1   1.26e+08   1.26e+08  12.52
+Scatter                 9          1   1.26e+08   1.26e+08  12.52
+Gather                 28          1   1.25e+08   1.25e+08  12.48
+Gather                 20          1   1.25e+08   1.25e+08  12.48
+Gather                 12          1   1.25e+08   1.25e+08  12.48
+Gather                  4          1   1.25e+08   1.25e+08  12.48
+Bcast                  30          1        324        324   0.00
+Bcast                  22          1        324        324   0.00
+Bcast                  14          1        324        324   0.00
+Bcast                   6          1        324        324   0.00
+Gather                 24          1          8          8   0.00
+Gather                 16          1          8          8   0.00
+Gather                  8          1          8          8   0.00
+Gather                 32          1          8          8   0.00
+Reduce                 29          1          8          8   0.00
+Reduce                 21          1          8          8   0.00
+Reduce                 13          1          8          8   0.00
+Reduce                  5          1          8          8   0.00
+---------------------------------------------------------------------------
+@--- Callsite Time statistics (all, milliseconds): 32 ---------------------
+---------------------------------------------------------------------------
+Name              Site Rank  Count      Max     Mean      Min   App%   MPI%
+Allgather            3    0      1      177      177      177   1.94   4.62
+Allgather            3    *      1      177      177      177   0.50   0.73
+
+Allgather           11    2      1      177      177      177   2.01   2.60
+Allgather           11    *      1      177      177      177   0.50   0.73
+
+Allgather           19    1      1      175      175      175   1.99   2.58
+Allgather           19    *      1      175      175      175   0.49   0.73
+
+Allgather           27    3      1      176      176      176   2.00   2.62
+Allgather           27    *      1      176      176      176   0.49   0.73
+
+Barrier              7    0      1     1.67     1.67     1.67   0.02   0.04
+Barrier              7    *      1     1.67     1.67     1.67   0.00   0.01
+
+Barrier             15    2      1      403      403      403   4.58   5.94
+Barrier             15    *      1      403      403      403   1.14   1.67
+
+Barrier             23    1      1      621      621      621   7.06   9.15
+Barrier             23    *      1      621      621      621   1.75   2.58
+
+Barrier             31    3      1    0.425    0.425    0.425   0.00   0.01
+Barrier             31    *      1    0.425    0.425    0.425   0.00   0.00
+
+Bcast                2    0      1    0.189    0.189    0.189   0.00   0.00
+Bcast                2    *      1    0.189    0.189    0.189   0.00   0.00
+
+Bcast                6    0      1   0.0824   0.0824   0.0824   0.00   0.00
+Bcast                6    *      1   0.0824   0.0824   0.0824   0.00   0.00
+
+Bcast               10    2      1     0.21     0.21     0.21   0.00   0.00
+Bcast               10    *      1     0.21     0.21     0.21   0.00   0.00
+
+Bcast               14    2      1 3.12e+03 3.12e+03 3.12e+03  35.41  45.89
+Bcast               14    *      1 3.12e+03 3.12e+03 3.12e+03   8.78  12.92
+
+Bcast               18    1      1    0.226    0.226    0.226   0.00   0.00
+Bcast               18    *      1    0.226    0.226    0.226   0.00   0.00
+
+Bcast               22    1      1 3.12e+03 3.12e+03 3.12e+03  35.38  45.89
+Bcast               22    *      1 3.12e+03 3.12e+03 3.12e+03   8.78  12.92
+
+Bcast               26    3      1    0.248    0.248    0.248   0.00   0.00
+Bcast               26    *      1    0.248    0.248    0.248   0.00   0.00
+
+Bcast               30    3      1 3.12e+03 3.12e+03 3.12e+03  35.43  46.45
+Bcast               30    *      1 3.12e+03 3.12e+03 3.12e+03   8.78  12.92
+
+Gather               4    0      1 2.79e+03 2.79e+03 2.79e+03  30.68  72.89
+Gather               4    *      1 2.79e+03 2.79e+03 2.79e+03   7.86  11.57
+
+Gather               8    0      1    0.052    0.052    0.052   0.00   0.00
+Gather               8    *      1    0.052    0.052    0.052   0.00   0.00
+
+Gather              12    2      1 1.13e+03 1.13e+03 1.13e+03  12.80  16.59
+Gather              12    *      1 1.13e+03 1.13e+03 1.13e+03   3.17   4.67
+
+Gather              16    2      1 1.43e+03 1.43e+03 1.43e+03  16.28  21.10
+Gather              16    *      1 1.43e+03 1.43e+03 1.43e+03   4.04   5.94
+
+Gather              20    1      1      194      194      194   2.20   2.85
+Gather              20    *      1      194      194      194   0.55   0.80
+
+Gather              24    1      1    0.172    0.172    0.172   0.00   0.00
+Gather              24    *      1    0.172    0.172    0.172   0.00   0.00
+
+Gather              28    3      1 2.55e+03 2.55e+03 2.55e+03  28.98  38.00
+Gather              28    *      1 2.55e+03 2.55e+03 2.55e+03   7.18  10.57
+
+Gather              32    3      1      4.4      4.4      4.4   0.05   0.07
+Gather              32    *      1      4.4      4.4      4.4   0.01   0.02
+
+Reduce               5    0      1    0.203    0.203    0.203   0.00   0.01
+Reduce               5    *      1    0.203    0.203    0.203   0.00   0.00
+
+Reduce              13    2      1     4.27     4.27     4.27   0.05   0.06
+Reduce              13    *      1     4.27     4.27     4.27   0.01   0.02
+
+Reduce              21    1      1 2.38e+03 2.38e+03 2.38e+03  27.00  35.01
+Reduce              21    *      1 2.38e+03 2.38e+03 2.38e+03   6.70   9.86
+
+Reduce              29    3      1     4.14     4.14     4.14   0.05   0.06
+Reduce              29    *      1     4.14     4.14     4.14   0.01   0.02
+
+Scatter              1    0      1      858      858      858   9.44  22.43
+Scatter              1    *      1      858      858      858   2.42   3.56
+
+Scatter              9    2      1      530      530      530   6.03   7.81
+Scatter              9    *      1      530      530      530   1.49   2.20
+
+Scatter             17    1      1      306      306      306   3.47   4.50
+Scatter             17    *      1      306      306      306   0.86   1.27
+
+Scatter             25    3      1      858      858      858   9.76  12.79
+Scatter             25    *      1      858      858      858   2.42   3.56
+---------------------------------------------------------------------------
+@--- Callsite Message Sent statistics (all, sent bytes) -------------------
+---------------------------------------------------------------------------
+Name              Site Rank   Count       Max      Mean       Min       Sum
+Bcast                2    0       1         4         4         4         4
+Bcast                2    *       1         4         4         4         4
+
+Bcast                6    0       1       324       324       324       324
+Bcast                6    *       1       324       324       324       324
+
+Bcast               10    2       1         4         4         4         4
+Bcast               10    *       1         4         4         4         4
+
+Bcast               14    2       1       324       324       324       324
+Bcast               14    *       1       324       324       324       324
+
+Bcast               18    1       1         4         4         4         4
+Bcast               18    *       1         4         4         4         4
+
+Bcast               22    1       1       324       324       324       324
+Bcast               22    *       1       324       324       324       324
+
+Bcast               26    3       1         4         4         4         4
+Bcast               26    *       1         4         4         4         4
+
+Bcast               30    3       1       324       324       324       324
+Bcast               30    *       1       324       324       324       324
+
+Gather               4    0       1 1.253e+08 1.253e+08 1.253e+08 1.253e+08
+Gather               4    *       1 1.253e+08 1.253e+08 1.253e+08 1.253e+08
+
+Gather               8    0       1         8         8         8         8
+Gather               8    *       1         8         8         8         8
+
+Gather              12    2       1 1.253e+08 1.253e+08 1.253e+08 1.253e+08
+Gather              12    *       1 1.253e+08 1.253e+08 1.253e+08 1.253e+08
+
+Gather              16    2       1         8         8         8         8
+Gather              16    *       1         8         8         8         8
+
+Gather              20    1       1 1.253e+08 1.253e+08 1.253e+08 1.253e+08
+Gather              20    *       1 1.253e+08 1.253e+08 1.253e+08 1.253e+08
+
+Gather              24    1       1         8         8         8         8
+Gather              24    *       1         8         8         8         8
+
+Gather              28    3       1 1.253e+08 1.253e+08 1.253e+08 1.253e+08
+Gather              28    *       1 1.253e+08 1.253e+08 1.253e+08 1.253e+08
+
+Gather              32    3       1         8         8         8         8
+Gather              32    *       1         8         8         8         8
+
+Reduce               5    0       1         8         8         8         8
+Reduce               5    *       1         8         8         8         8
+
+Reduce              13    2       1         8         8         8         8
+Reduce              13    *       1         8         8         8         8
+
+Reduce              21    1       1         8         8         8         8
+Reduce              21    *       1         8         8         8         8
+
+Reduce              29    3       1         8         8         8         8
+Reduce              29    *       1         8         8         8         8
+
+Scatter              1    0       1 1.258e+08 1.258e+08 1.258e+08 1.258e+08
+Scatter              1    *       1 1.258e+08 1.258e+08 1.258e+08 1.258e+08
+
+Scatter              9    2       1 1.258e+08 1.258e+08 1.258e+08 1.258e+08
+Scatter              9    *       1 1.258e+08 1.258e+08 1.258e+08 1.258e+08
+
+Scatter             17    1       1 1.258e+08 1.258e+08 1.258e+08 1.258e+08
+Scatter             17    *       1 1.258e+08 1.258e+08 1.258e+08 1.258e+08
+
+Scatter             25    3       1 1.258e+08 1.258e+08 1.258e+08 1.258e+08
+Scatter             25    *       1 1.258e+08 1.258e+08 1.258e+08 1.258e+08
+---------------------------------------------------------------------------
+@--- End of Report --------------------------------------------------------
+---------------------------------------------------------------------------

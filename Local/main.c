@@ -35,12 +35,12 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int B = 10;
+    int B = 80;
     if (argc > 1) {
         B = atoi(argv[1]);
         if (B <= 0) {
             if (rank == 0) fprintf(stderr, "Invalid B value. Using default B=10.\n");
-            B = 10;
+            B = 20;
         }
     }
     MPI_Bcast(&B, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -78,7 +78,6 @@ int main(int argc, char** argv) {
         start_time = time(NULL);
     }
     
-    MPI_Barrier(MPI_COMM_WORLD); // 全プロセス同期
     start_time = time(NULL);
     double start = MPI_Wtime();
     // カーネルのBroadcast
