@@ -34,8 +34,18 @@ int main(int argc, char** argv) {
     int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+    
+    int B = 10;
+    if (argc > 1) {
+        B = atoi(argv[1]);
+        if (B <= 0) {
+            if (rank == 0) fprintf(stderr, "Invalid B value. Using default B=10.\n");
+            B = 10;
+        }
+    }
+    MPI_Bcast(&B, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-    const int B = 10, IC = 1, OC = 1, H = 1024, W = 1024, K = 3;
+    const int  IC = 1, OC = 1, H = 1024, W = 1024, K = 3;
     const int B_local = B / size;
     const int out_H = H - K + 1, out_W = W - K + 1;
 

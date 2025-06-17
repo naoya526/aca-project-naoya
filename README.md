@@ -64,6 +64,7 @@ input:10000 for each processor
 | 2           | 11.10 sec           | [1034.45, 72.77]                                            | 1107.22                | (80, 3, 1022, 1022)      |
 | 4           | 3.04 sec            | [1034.35, 72.91, 73.28, 72.74]                              | 1253.28                | (80, 3, 1022, 1022)      |
 | 8           | 0.88 sec            | [1034.45, 73.06, 72.88, 72.95, 70.81, 70.89, 72.99, 73.01]  | 1541.04                | (80, 3, 1022, 1022)      |
+
 debian@fat-node-0:~/aca-project-naoya/Local$ ./Fat.sh
 Strong Scalability
 [MPI] rank=0, size=1, local_batch=80, start=0, end=80
