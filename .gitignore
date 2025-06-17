@@ -13,3 +13,6 @@ override.tf.json
 crash.log
 Light_cluster/terraform.tfvars
 memo
+
+# python
+graph.py

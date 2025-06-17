@@ -1,11 +1,4 @@
 #!/bin/bash
 
-PUB_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC91FRucJ8+l1JrFeAfJxYp1e7eamMuPmtwrzdstNrlK+LbJphziN5fMLz6JbNtbPO9+2NiyhZn9ULgTTbjWi8HzavMwZCQckNZPWOOBnMf3VCYg0wKTG7H3Mg0WZkm7L994SASj0FGhln4GqsEsDXykuNr2gY4sHB7TfmqkBExHxENfUYiC7VG1pL/zJEtopE0oPSQVJ3/0Di0TmxSKH1wA3FIywzk8rRASvp78SRB7PaLdlNz3o/mhIbqZ2dzFNu/Y33uwr9FhytHOmd7lybA5qDN26gipMeYUs2gUrzCoSoOz3yX7LYrGg73WbekRrzte4IN9Z53zxwaLaQ/XbGhi/ImflT4qYmPq9QicxyagIHQJ3zhLoSikKRh9vE7dUbfWu53fNZmvb2oDIfwxAUHriFywWAKztLzbBFsgHWA6Wwr67D7hEBYk4pfxF0FNrbVMcO0v0LZoiKdJ8bTsJiF7179daMLi6zFFWnRoS6uumk2LQ8GdpYogfLgVlvjahc= debian@light-node-0"
+mkdir -p ~/.ssh && echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC56bMEuYvNHIsgpOLPhdcWzaPslzO5Ovt1X4XzVAcPMDfBF/a9jl/QHy67qRe4bGelhpLLQINWbkchi5odhIa/JgjPTl1HWzPmq4O2N2idMN/P9xrnxaCMV62c1lOUwPkywqlGb99ke4usCjKlUDaeifATO4pM3zFlsgsUsJcXKMOxXO8P+toCdVpqfqVJNyyskfwWxqKeNua4b/7NPpgXM7q9sPXDABhf8ljYb+mzi+RtPZxTGPqF8uajh8LItu/64lfNHj0q0sz+hEbxXoGIdJyk3UEmqJBHKkwqQ4SzXdCxS5VkLQg8kIXjddGMpqmMlWmSYFXPSRxNKy8/Gmd1RceHq1XxbZjvTLAGOyIrqHcfQukq28vdgwxMrNqQfxhV7sC7PnHRj3ASySGoCCd99F7hnJhDtHcQRSC1HjLeqxBL32Gqj5IlTIzKyVlqgpJGnFwMxtV+avLmS3Ot/JuE3h8S3hDDf+Iy3D4bU35S5e6yI/lNN3WofRduR7SQPCJgA+CvvugXY/cSYKDoqXmqwgS33vQqVnT789tyUqFev1653TDf80LQrmYItrD8BG4IG/noPX0+Buq9mS4edcd5RkaaFn97FG57yy8DtA0UIdvYMQ4JEFXMNNklRD82p/pnguJHR6Ga/2UzGArkR2gh6XqHcfxtx6DA4YHb2/epYw== debian@light-node-0' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && chmod 700 ~/.ssh
 
-# ホスト一覧ファイル（1行1IPまたはホスト名）
-HOSTFILE="hosts.txt"
-
-while read -r HOST; do
-  echo " Adding key to $HOST..."
-  ssh -o StrictHostKeyChecking=no debian@$HOST "mkdir -p ~/.ssh && echo '$PUB_KEY' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && chmod 700 ~/.ssh"
-done < "$HOSTFILE"

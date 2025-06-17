@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    const int B = 100, IC = 1, OC = 1, H = 1024, W = 1024, K = 3;
+    const int B = 10, IC = 1, OC = 1, H = 1024, W = 1024, K = 3;
     const int B_local = B / size;
     const int out_H = H - K + 1, out_W = W - K + 1;
 

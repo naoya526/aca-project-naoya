@@ -33,20 +33,38 @@ sudo apt-get install -y git || { echo "Git install failed"; exit 1; }
 
 # Python
 echo "Installing Python Library..."
-sudo apt update && sudo apt install -y \
-    build-essential \
-    libopenmpi-dev \
-    python3-dev \
-    python3-pip \
-    python3-venv \
-    libjpeg-dev
-pip install --upgrade pip
-pip install \
-    numpy \
-    mpi4py \
-    pillow \
-    matplotlib \
-    psutil
+# Ubuntu パッケージを更新
+sudo apt update -y
+
+# Python3 と pip3 がインストールされていない場合に備えて
+sudo apt install -y python3 python3-pip python3-venv
+
+# Python パッケージ依存を apt でインストール
+sudo apt install -y \
+  python3-numpy \
+  python3-mpi4py \
+  libopenmpi-dev \
+  openmpi-bin \
+  python3-pil \
+  python3-matplotlib \
+  python3-psutil
+
+# 動作確認
+echo "インストール済みパッケージのバージョン確認:"
+python3 -c "
+import ctypes
+import numpy as np
+from mpi4py import MPI
+import time
+from PIL import Image
+from matplotlib import pyplot as plt
+import psutil
+import os
+import sys
+
+print('すべてのパッケージが正常にインポートされました！')
+"
+
 
 # リポジトリクローン
 echo "Cloning repository..."
