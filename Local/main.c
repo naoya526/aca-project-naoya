@@ -2,6 +2,7 @@
 //mpiexec -n 4 ./cnn_mpi
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mpi.h>
 #include <time.h>
 
@@ -10,6 +11,21 @@ extern void conv2d_forward(float* input, float* kernel, float* output,
 
 float rand_float() {
     return (float)rand() / (float)RAND_MAX;
+}
+
+size_t get_memory_usage_kb() {
+    FILE* file = fopen("/proc/self/status", "r");
+    if (!file) return 0;
+    char line[256];
+    size_t mem = 0;
+    while (fgets(line, sizeof(line), file)) {
+        if (strncmp(line, "VmRSS:", 6) == 0) {
+            sscanf(line + 6, "%zu", &mem);
+            break;
+        }
+    }
+    fclose(file);
+    return mem; // KB
 }
 
 int main(int argc, char** argv) {
@@ -71,6 +87,21 @@ int main(int argc, char** argv) {
                output_full, B_local * OC * out_H * out_W, MPI_FLOAT,
                0, MPI_COMM_WORLD);
     
+    // メモリ使用量の取得と集約
+    size_t mem_kb = get_memory_usage_kb();
+    size_t* all_mem_kb = NULL;
+    if (rank == 0) {
+        all_mem_kb = (size_t*)malloc(size * sizeof(size_t));
+    }
+    MPI_Gather(&mem_kb, 1, MPI_UNSIGNED_LONG, all_mem_kb, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
+
+    if (rank == 0) {
+        printf("Memory usage (VmRSS) per rank (KB):\n");
+        for (int i = 0; i < size; ++i) {
+            printf("  Rank %d: %zu MB\n", i, all_mem_kb[i]/1024);
+        }
+        free(all_mem_kb);
+    }
 
     // 最大時間をrank 0で集約表示
     double end = MPI_Wtime();

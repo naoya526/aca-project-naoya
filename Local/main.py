@@ -17,7 +17,16 @@ SEED = 200
 
 
 # ---- Cライブラリの読み込み ----
-lib = ctypes.CDLL('./libconv.so')
+
+try:
+    lib = ctypes.CDLL('./libconv.so')
+except OSError:
+    try:
+        lib = ctypes.CDLL('./~/aca-project-naoya/Local/libconv.so')
+    except OSError:
+        print("Error: Could not load 'libconv.so' from any known location.", file=sys.stderr)
+        sys.exit(1)
+
 lib.conv2d_forward.argtypes = [ctypes.POINTER(ctypes.c_float)] * 3 + [ctypes.c_int] * 6
 lib.conv2d_forward.restype = None
 
