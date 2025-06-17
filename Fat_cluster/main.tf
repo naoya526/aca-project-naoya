@@ -6,9 +6,9 @@ provider "google" {
 }
 
 resource "google_compute_instance" "fat_nodes" {
-  count        = 2
+  count        = 1
   name         = "fat-node-${count.index}"
-  machine_type = "n2-highcpu-16"
+  machine_type = "n2-highcpu-8"
   zone         = var.zone
 
 

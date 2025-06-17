@@ -12,12 +12,16 @@ weak_speedup = [weak_time[0] / t for t in weak_time]
 
 # 理想的なスピードアップ（Amdahl's law）
 p = 0.9
-ideal_speedup = [1 / ((1 - p) + (p / n)) for n in processes]
+#amdhal
+ideal_speedup_a = [1 / ((1 - p) + (p / n)) for n in processes]
+#gustafson
+ideal_speedup_g = [n - (1 - p)*(n - 1) for n in processes]
+
 
 # スタイル設定
 sns.set_style("whitegrid")
 
-def create_scalability_plot(processes, time_data, speedup_data, title, time_color, speedup_color):
+def create_scalability_plot(processes, time_data, speedup_data, title, time_color, speedup_color, ideal_speedup):
     """スケーラビリティプロットを作成する関数"""
     fig, ax1 = plt.subplots(figsize=(8, 5))
     
@@ -55,12 +59,11 @@ def create_scalability_plot(processes, time_data, speedup_data, title, time_colo
 create_scalability_plot(
     processes, strong_time, strong_speedup,
     'Fat Cluster - Strong Scalability (Time & Speedup)',
-    'tab:blue', 'tab:red'
-)
+    'tab:blue', 'tab:red',ideal_speedup_a)
 
 # Weak scalabilityプロット
 create_scalability_plot(
     processes, weak_time, weak_speedup,
     'Fat Cluster - Weak Scalability (Time & Speedup)',
-    'tab:orange', 'tab:green'
+    'tab:orange', 'tab:green', ideal_speedup_g
 )

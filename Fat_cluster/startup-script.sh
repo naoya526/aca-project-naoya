@@ -65,6 +65,8 @@ import sys
 print('すべてのパッケージが正常にインポートされました！')
 "
 
+sudo apt update
+sudo apt install linux-tools-common linux-tools-$(uname -r)
 
 
 # リポジトリクローン
