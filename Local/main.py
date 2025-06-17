@@ -40,9 +40,9 @@ if rank == 0:
         try:
             B = int(sys.argv[1])
         except ValueError:
-            B = 32  # デフォルト値
+            B = 80  # デフォルト値
     else:
-        B = 32  # デフォルト値
+        B = 80 # デフォルト値
 else:
     B = None
 
