@@ -12,22 +12,22 @@ This project explores parallelizing the forward and backward propagation of conv
 -  OpenMPI-based parallel execution confirmed on local machine
 -  Docker-based development environment working
 -  Tested local cluster performance using `mpiexec`
--  GCP infrastructure being prepared with Terraform (not yet deployed)
+-  GCP infrastructure being prepared with Terraform
 -  Validate MPI-based distributed runs in cloud
 -  Compare performance between local and cloud environments
 
 -  You can find the detailed report in the following PDF:
 
 [ParallelComputing_NaoyaKumakura.pdf](./ParallelComputing_NaoyaKumakura.pdf)  
-This document provides an in-depth explanation of the project, including background, methodology, experimental setup, results, and analysis.
+This document provides an explanation of the project, including background, methodology, experimental setup, results, and analysis.
 
 ## 3. Local Development Environment
 
-- Language: C (core computation) + Python (wrapper + launcher)
+- Language: C (core computation) + Python (wrapper + launcher + data loading(PIL image))
 - Parallelism: OpenMPI
-- Local testing: Docker containers
-- Build tool: `Makefile`
-- Debugging: GDB (GNU Debugger)
+- Local testing: Ubuntu WSL2
+- Analysing: mpiP
+- Cloud Deployment: Terraform
 
 ## 4. Implementation
 
