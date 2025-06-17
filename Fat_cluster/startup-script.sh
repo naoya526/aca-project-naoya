@@ -66,7 +66,8 @@ print('すべてのパッケージが正常にインポートされました！'
 "
 
 sudo apt update
-sudo apt install linux-tools-common linux-tools-$(uname -r)
+sudo apt install linux-perf
+
 
 
 # リポジトリクローン
